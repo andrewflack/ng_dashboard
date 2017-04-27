@@ -9,6 +9,11 @@ ui <- dashboardPage(
   # Sidebar
   dashboardSidebar(    
     sidebarMenu(
+      
+      selectInput("pub_list",
+                  label = "Publisher:",
+                  choices = sort(unique(counts$billing_name))),
+      
       menuItem("Tab 1", 
                tabName = "tab1", 
                icon = icon("bar-chart"))
