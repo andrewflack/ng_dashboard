@@ -57,7 +57,14 @@ server <- function(input, output) {
    })
    
    output$plot2 <- renderPlotly({
-     p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram")
+     x <- list(
+       title = "Number of Days on NetGalley"
+    )
+     y <- list(
+       title = "Number of Titles"
+    )
+     p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram") %>%
+       layout(xaxis = x, yaxis = y)
    })
 }
 
