@@ -28,7 +28,8 @@ ui <- dashboardPage(
         fluidRow(
           box(
             title = "plot2",
-            solidHeader = TRUE
+            solidHeader = TRUE,
+            plotlyOutput("plot2")
           )
         )
       )
@@ -53,6 +54,10 @@ server <- function(input, output) {
        theme(legend.position = "none")
      
      ggplotly(p)
+   })
+   
+   output$plot2 <- renderPlotly({
+     p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram")
    })
 }
 
