@@ -31,13 +31,6 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             plotlyOutput("plot2")
           )
-        ),
-        fluidRow(
-          box(
-            title = "plot3",
-            solidHeader = TRUE,
-            plotlyOutput("plot3")
-          )
         )
       )
     )
@@ -73,16 +66,7 @@ server <- function(input, output) {
      p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram") %>%
        layout(xaxis = x, yaxis = y)
    })
-   output$plot3 <- renderPlotly({
-     x <- list(
-       title = "Number of Days on NetGalley"
-     )
-     y <- list(
-       title = "Number of Titles"
-     )
-     p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram") %>%
-       layout(xaxis = x, yaxis = y)
-   })
+  
 }
 
 # Run the application 
