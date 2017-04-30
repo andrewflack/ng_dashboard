@@ -36,6 +36,27 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             plotlyOutput("plot2")
           )
+        ),
+        fluidRow(
+          box(
+            title = "plot3",
+            solidHeader = TRUE,
+            plotlyOutput("plot3")
+          )
+        ),
+        fluidRow(
+          box(
+            title = "plot4",
+            solidHeader = TRUE,
+            plotlyOutput("plot4")
+          )
+        ),
+        fluidRow(
+          box(
+            title = "plot5",
+            solidHeader = TRUE,
+            plotlyOutput("plot5")
+          )
         )
       )
     )
@@ -68,10 +89,63 @@ server <- function(input, output) {
      y <- list(
        title = "Number of Titles"
     )
-     p <- plot_ly(x = ~days$n_days_on_netgalley, type = "histogram") %>%
+     p <- plot_ly(x = ~days[which(days$billing_name == input$pub_list), "n_days_on_netgalley"], type = "histogram") %>%
        layout(xaxis = x, yaxis = y)
    })
+   
+   output$plot3 <- renderPlotly({
+     p <- df %>% 
+       filter(billing_name == input$pub_list) %>%
+       select(auto_approved_pct, 
+              declined_pct, 
+              granted_by_wish_pct, 
+              invited_pct, 
+              new_pct, 
+              read_now_pct, 
+              manual_approved_pct) %>% 
+       melt() %>% 
+       ggplot(aes(x = variable, y = value)) + 
+       geom_boxplot() + 
+       scale_x_discrete(labels = c("Manual", "Read Now", "New", "Invited", "Granted by Wish", "Declined", "Auto Approved")) +
+       coord_flip() +
+       theme_minimal() +
+       labs(x = NULL, y = NULL, title = "Approval Methods")
+     
+     ggplotly(p)
+   })
+   
+   output$plot4 <- renderPlotly({
+     p <- df %>%
+       filter(billing_name == input$pub_list) %>%
+       select(kindle_pct,
+              open_pct,
+              permanent_drm_pct,
+              social_drm_pct,
+              temporary_drm_pct) %>%
+       melt() %>%
+       ggplot(aes(x = variable, y = value)) +
+       geom_boxplot() +
+       scale_x_discrete(labels = c("Kindle", "Open", "Permanent DRM", "Social DRM", "Temporary DRM")) +
+       coord_flip() +
+       theme_minimal() +
+       labs(x = NULL, y = NULL, title = "Download Methods")
+
+     ggplotly(p)
+   })
   
+   output$plot5 <- renderPlotly({
+     p <- df %>%
+       filter(billing_name == input$pub_list) %>%
+       filter(social_shares > 0) %>%
+       ggplot(aes(y = social_views, x = social_shares)) +
+       geom_jitter(alpha = .5) +
+       theme_minimal() +
+       labs(x = "Social Shares",
+            y = "Social Views",
+            title = "Social Activity")
+
+     ggplotly(p)
+   })
 }
 
 # Run the application 
