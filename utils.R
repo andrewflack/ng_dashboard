@@ -29,3 +29,15 @@ pub_info <- read.csv("dashboard_data/NetGalley Active Publishers providing ONIX 
 
 df <- df %>% left_join(pub_info[,c("billing_name", "id")], by = c("account_id" = "id"))
 days <- days %>% left_join(pub_info, by = c("account_id" = "id"))
+
+all_pub_means <- df %>% 
+  select(auto_approved_pct, 
+         declined_pct, 
+         granted_by_wish_pct, 
+         invited_pct, 
+         new_pct, 
+         read_now_pct, 
+         manual_approved_pct) %>% 
+  colMeans(na.rm = TRUE) %>% 
+  melt(value.name = c("All Publishers")) %>% 
+  tibble::rownames_to_column(var = "var")

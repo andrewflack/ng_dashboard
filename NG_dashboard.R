@@ -57,7 +57,15 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             plotlyOutput("plot5")
           )
+        ),
+        fluidRow(
+          box(
+            title = "plot6",
+            solidHeader = TRUE,
+            plotlyOutput("plot6")
+          )
         )
+        
       )
     )
   )
@@ -146,6 +154,34 @@ server <- function(input, output) {
 
      ggplotly(p)
    })
+   
+   output$plot5 <- renderPlotly({
+     p <- df %>%
+       filter(billing_name == input$pub_list) %>%
+       select(
+         auto_approved_pct,
+         declined_pct,
+         granted_by_wish_pct,
+         invited_pct,
+         new_pct,
+         read_now_pct,
+         manual_approved_pct) %>% 
+       melt(variable.name = c("approval_type")) %>% 
+       group_by(approval_type) %>% 
+       summarize("This Publisher" = mean(value, na.rm = TRUE)) %>% 
+       left_join(all_pub_means, by = c("approval_type" = "var")) %>%
+       melt() %>% 
+       ggplot(aes(x = approval_type, y = value, fill = variable)) +
+       geom_bar(stat = "identity", position = position_dodge()) +
+       scale_x_discrete(labels = c("Auto Approved", "Declined", "Granted by Wish", "Invited", "Manual", "New", "Read Now")) +
+       theme_minimal() +
+       labs(x = NULL, y = NULL, title = "Approval Methods") +
+       theme(legend.title = element_blank(),
+             axis.text.x  = element_text(angle=90))
+     
+     ggplotly(p)
+   })
+   
 }
 
 # Run the application 
